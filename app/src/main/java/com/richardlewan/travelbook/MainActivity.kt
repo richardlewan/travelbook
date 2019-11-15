@@ -1,6 +1,5 @@
 package com.richardlewan.travelbook
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,7 +9,7 @@ import android.widget.ArrayAdapter
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_main.*
 
-// TODO: Refactor this to get rid of global vars. Don't like globals.
+// TODO: I Don't like global vars. Refactor this to get rid of globals?
 var namesList = ArrayList<String>()
 var locationsList = ArrayList<LatLng>()
 
@@ -35,35 +34,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        try {
-            val database = openOrCreateDatabase("Places", Context.MODE_PRIVATE,null)
-            val cursor = database.rawQuery("SELECT * FROM places",null)
-
-            val nameIndex = cursor.getColumnIndex("name")
-            val latitudeIndex = cursor.getColumnIndex("latitude")
-            val longitudeIndex = cursor.getColumnIndex("longitude")
-            cursor.moveToFirst()
-
-            namesList.clear()
-            locationsList.clear()
-
-            while (!cursor.isAfterLast) {
-                val nameFromDatabase = cursor.getString(nameIndex)
-                val latitudeFromDatabase = cursor.getString(latitudeIndex)
-                val longitudeFromDatabase = cursor.getString(longitudeIndex)
-                namesList.add(nameFromDatabase)
-
-                val latitudeCoordinate = latitudeFromDatabase.toDouble()
-                val longitudeCoordinate = longitudeFromDatabase.toDouble()
-
-                val location = LatLng(latitudeCoordinate,longitudeCoordinate)
-                locationsList.add(location)
-
-                cursor.moveToNext()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        // Fetch the existing Places from the sqlLite DB.
+        PlacesDAO.fetchPlaces(applicationContext)
 
         val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, namesList)
         listView.adapter = arrayAdapter
