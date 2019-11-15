@@ -2,6 +2,7 @@ package com.richardlewan.travelbook
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.android.gms.maps.model.LatLng
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,5 +21,23 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.richardlewan.travelbook", appContext.packageName)
+    }
+
+    @Test
+    fun testPlacesDAO() {
+        // Given
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val address = "123 Main"
+        val lat = 123.321
+        val long = -432.312
+        val location = LatLng(lat, long)
+
+        // When
+        PlacesDAO.savePlace(appContext, address, lat, long)
+
+        // Then
+        PlacesDAO.fetchPlaces(appContext)
+        assert(address in namesList)
+        assert(location in locationsList)
     }
 }
