@@ -17,10 +17,23 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.richardlewan.travelbook.application.TravelbookApplication
+import com.richardlewan.travelbook.service.PersistService
+import com.richardlewan.travelbook.service.PersistServiceImpl
 import java.lang.Exception
 import java.util.Locale
+import javax.inject.Inject
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    @Inject
+    lateinit var locationsList: ArrayList<LatLng>
+
+    @Inject
+    lateinit var namesList: ArrayList<String>
+
+    @Inject
+    lateinit var persistService: PersistService
 
     private lateinit var googleMap: GoogleMap
 
@@ -29,6 +42,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        (application as TravelbookApplication).travelbookComponent.inject(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -100,12 +115,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             // Mark the location with its address
             val locationMarker = googleMap.addMarker(MarkerOptions().position(p0!!).title(address))
             locationMarker.showInfoWindow()
-            namesList.add(address)
-            locationsList.add(p0)
+//            namesList.add(address)
+//            locationsList.add(p0)
             Toast.makeText(applicationContext, "New Place Created", Toast.LENGTH_LONG).show()
 
             // Add the address, lat, long to the sqlLite db as 'place' record.
             PlacesDAO.savePlace(applicationContext, address, p0.latitude, p0.longitude)
+//            persistService.savePlace(applicationContext, namesList, locationsList,
+//                                        address, p0.latitude, p0.longitude)
         }
     }
 }

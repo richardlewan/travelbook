@@ -7,13 +7,21 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import com.google.android.gms.maps.model.LatLng
+import com.richardlewan.travelbook.application.TravelbookApplication
+import com.richardlewan.travelbook.service.PersistService
 import kotlinx.android.synthetic.main.activity_main.*
-
-// TODO: I Don't like global vars. Refactor this to get rid of globals?
-var namesList = ArrayList<String>()
-var locationsList = ArrayList<LatLng>()
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var locationsList: ArrayList<LatLng>
+
+    @Inject
+    lateinit var namesList: ArrayList<String>
+
+    @Inject
+    lateinit var persistService: PersistService
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val menuInflater = menuInflater
@@ -35,7 +43,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         // Fetch the existing Places from the sqlLite DB.
-        PlacesDAO.fetchPlaces(applicationContext)
+//        val places: ArrayList<Place> = PlacesDAO.fetchPlaces(applicationContext)
+        persistService.fetchPlaces(applicationContext, namesList, locationsList)
 
         val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, namesList)
         listView.adapter = arrayAdapter
@@ -46,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("info","old")
             intent.putExtra("name", namesList[i])
             intent.putExtra("latitude", locationsList[i].latitude)
-            intent.putExtra("longitude",locationsList[i].longitude)
+            intent.putExtra("longitude", locationsList[i].longitude)
             startActivity(intent)
         }
 
@@ -56,5 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        (application as TravelbookApplication).travelbookComponent.inject(this)
     }
 }
