@@ -5,7 +5,6 @@ import com.richardlewan.travelbook.service.PersistService
 import com.richardlewan.travelbook.service.PersistServiceImpl
 import dagger.Module
 import dagger.Provides
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
@@ -20,5 +19,5 @@ class LocationsModule {
 
     @Provides
     @Singleton
-    fun providePersistService() : PersistService = PersistServiceImpl(provideNamesList(), provideLocationsList())
+    fun providePersistService(namesList: ArrayList<String>, locationsList: ArrayList<LatLng>) : PersistService = PersistServiceImpl(namesList, locationsList)
 }

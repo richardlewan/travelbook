@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.richardlewan.travelbook.application.TravelbookApplication
 import com.richardlewan.travelbook.service.PersistService
-import com.richardlewan.travelbook.service.PersistServiceImpl
 import java.lang.Exception
 import java.util.Locale
 import javax.inject.Inject
@@ -97,7 +96,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             val geocoder = Geocoder(applicationContext, Locale.US)
             var address = ""
             try {
-                val addressList = geocoder.getFromLocation(p0!!.latitude, p0!!.longitude, 1)
+                val addressList = geocoder.getFromLocation(p0!!.latitude, p0.longitude, 1)
                 if (addressList != null && addressList.isNotEmpty()) {
                     val thoroughfare = addressList[0].thoroughfare
                     if (thoroughfare != null) {
@@ -115,14 +114,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             // Mark the location with its address
             val locationMarker = googleMap.addMarker(MarkerOptions().position(p0!!).title(address))
             locationMarker.showInfoWindow()
-//            namesList.add(address)
-//            locationsList.add(p0)
+            namesList.add(address)
+            locationsList.add(p0)
             Toast.makeText(applicationContext, "New Place Created", Toast.LENGTH_LONG).show()
 
             // Add the address, lat, long to the sqlLite db as 'place' record.
-            PlacesDAO.savePlace(applicationContext, address, p0.latitude, p0.longitude)
-//            persistService.savePlace(applicationContext, namesList, locationsList,
-//                                        address, p0.latitude, p0.longitude)
+            persistService.savePlace(applicationContext, address, p0.latitude, p0.longitude)
         }
     }
 }

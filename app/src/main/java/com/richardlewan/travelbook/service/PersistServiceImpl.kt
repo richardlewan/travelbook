@@ -6,16 +6,17 @@ import javax.inject.Inject
 
 class PersistServiceImpl : PersistService {
 
-//    lateinit var locationsList: ArrayList<LatLng>
-//
-//    lateinit var namesList: ArrayList<String>
+    var locationsList: ArrayList<LatLng>
 
-//    @Inject
+    var namesList: ArrayList<String>
+
+    @Inject
     constructor(namesList: ArrayList<String>, locationsList: ArrayList<LatLng>) {
-
+        this.namesList = namesList
+        this.locationsList = locationsList
     }
 
-    override fun fetchPlaces(context: Context, namesList: ArrayList<String>, locationsList: ArrayList<LatLng>) {
+    override fun fetchPlaces(context: Context) {
         try {
             val database = context.openOrCreateDatabase("Places", Context.MODE_PRIVATE, null)
             val cursor = database.rawQuery("SELECT * FROM places", null)
@@ -47,8 +48,7 @@ class PersistServiceImpl : PersistService {
         }
     }
 
-    override fun savePlace(context: Context, namesList: ArrayList<String>, locationsList: ArrayList<LatLng>,
-                           address: String, latitude: Double, longitude: Double) {
+    override fun savePlace(context: Context, address: String, latitude: Double, longitude: Double) {
         try {
             val lat = latitude.toString()
             val long = longitude.toString()

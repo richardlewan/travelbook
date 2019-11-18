@@ -43,8 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         // Fetch the existing Places from the sqlLite DB.
-//        val places: ArrayList<Place> = PlacesDAO.fetchPlaces(applicationContext)
-        persistService.fetchPlaces(applicationContext, namesList, locationsList)
+        persistService.fetchPlaces(applicationContext)
 
         val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, namesList)
         listView.adapter = arrayAdapter
