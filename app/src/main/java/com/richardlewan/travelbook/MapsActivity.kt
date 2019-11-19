@@ -17,10 +17,22 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.richardlewan.travelbook.application.TravelbookApplication
+import com.richardlewan.travelbook.service.PersistService
 import java.lang.Exception
 import java.util.Locale
+import javax.inject.Inject
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    @Inject
+    lateinit var locationsList: ArrayList<LatLng>
+
+    @Inject
+    lateinit var namesList: ArrayList<String>
+
+    @Inject
+    lateinit var persistService: PersistService
 
     private lateinit var googleMap: GoogleMap
 
@@ -29,6 +41,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        (application as TravelbookApplication).travelbookComponent.inject(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -82,7 +96,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             val geocoder = Geocoder(applicationContext, Locale.US)
             var address = ""
             try {
-                val addressList = geocoder.getFromLocation(p0!!.latitude, p0!!.longitude, 1)
+                val addressList = geocoder.getFromLocation(p0!!.latitude, p0.longitude, 1)
                 if (addressList != null && addressList.isNotEmpty()) {
                     val thoroughfare = addressList[0].thoroughfare
                     if (thoroughfare != null) {
@@ -105,7 +119,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Toast.makeText(applicationContext, "New Place Created", Toast.LENGTH_LONG).show()
 
             // Add the address, lat, long to the sqlLite db as 'place' record.
-            PlacesDAO.savePlace(applicationContext, address, p0.latitude, p0.longitude)
+            persistService.savePlace(applicationContext, address, p0.latitude, p0.longitude)
         }
     }
 }

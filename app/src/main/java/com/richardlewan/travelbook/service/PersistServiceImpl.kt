@@ -1,11 +1,22 @@
-package com.richardlewan.travelbook
+package com.richardlewan.travelbook.service
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
+import javax.inject.Inject
 
-object PlacesDAO {
+class PersistServiceImpl : PersistService {
 
-    fun fetchPlaces(context: Context) {
+    var locationsList: ArrayList<LatLng>
+
+    var namesList: ArrayList<String>
+
+    @Inject
+    constructor(namesList: ArrayList<String>, locationsList: ArrayList<LatLng>) {
+        this.namesList = namesList
+        this.locationsList = locationsList
+    }
+
+    override fun fetchPlaces(context: Context) {
         try {
             val database = context.openOrCreateDatabase("Places", Context.MODE_PRIVATE, null)
             val cursor = database.rawQuery("SELECT * FROM places", null)
@@ -37,7 +48,7 @@ object PlacesDAO {
         }
     }
 
-    fun savePlace(context: Context, address: String, latitude: Double, longitude: Double) {
+    override fun savePlace(context: Context, address: String, latitude: Double, longitude: Double) {
         try {
             val lat = latitude.toString()
             val long = longitude.toString()
@@ -59,4 +70,5 @@ object PlacesDAO {
             e.printStackTrace()
         }
     }
+
 }
